@@ -21,6 +21,10 @@ Thanaphoom Babparn (Mart) - [LinkedIn](https://www.linkedin.com/in/thanaphoom-ba
     # 200 RPS
     cargo run -- --interval-secs 1 --max-rps 200
     ````
+   You can control the amount of request.
+   * **interval-secs**: control sleep period for spawning thread => Mostly use 1 for imitate per second
+   * **max-rps**: how many tokio you want to spawn? 1000 means 1000 processes
+
 ## How to run tests & test coverage
 
 ### Run test only
