@@ -2,14 +2,14 @@ name: Server Build and Test
 
 on:
   workflow_call:
-  push:
-    paths:
-      - 'server/**'
-      - '.github/workflows/**'
-  pull_request:
-    paths:
-      - 'server/**'
-      - '.github/workflows/**'
+#  push:
+#    paths:
+#      - 'server/**'
+#      - '.github/workflows/**'
+#  pull_request:
+#    paths:
+#      - 'server/**'
+#      - '.github/workflows/**'
 
 env:
   CARGO_TERM_COLOR: always
