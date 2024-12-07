@@ -13,7 +13,7 @@ pub struct MenuData {
     pub name: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     pub table_range: (u32, u32),
 }
