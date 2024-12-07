@@ -2,14 +2,10 @@ name: Server Build and Test
 
 on:
   workflow_dispatch:
-#  push:
-#    paths:
-#      - 'server/**'
-#      - '.github/workflows/**'
-#  pull_request:
-#    paths:
-#      - 'server/**'
-#      - '.github/workflows/**'
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
