@@ -1,9 +1,10 @@
 use crate::model::{ApiResponse, Config, MenuData, Order};
-use rand::prelude::IndexedRandom;
 use rand::Rng;
 use reqwest::Client;
 use std::error::Error;
 use uuid::Uuid;
+
+pub type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync>>;
 
 #[derive(Debug, Clone)]
 pub struct RestaurantClient {
@@ -23,7 +24,11 @@ impl RestaurantClient {
         }
     }
 
-    pub async fn initialize(&mut self) -> Result<(), Box<dyn Error>> {
+    pub fn get_config(&self) -> Option<Config> {
+        self.config.clone()
+    }
+
+    pub async fn initialize(&mut self) -> Result<()> {
         let config: ApiResponse<Config> = self
             .client
             .get(&format!("{}/configs", self.base_url))
@@ -45,7 +50,7 @@ impl RestaurantClient {
         Ok(())
     }
 
-    pub async fn get_table_orders(&self, table_id: u32) -> Result<Vec<Order>, Box<dyn Error>> {
+    pub async fn get_table_orders(&self, table_id: u32) -> Result<Vec<Order>> {
         let path = format!(
             "{}/tables/{}/orders",
             self.base_url, table_id
@@ -60,11 +65,13 @@ impl RestaurantClient {
         Ok(response.data)
     }
 
-    pub async fn create_order(&self, menu_count: usize) -> Result<(), Box<dyn Error>> {
-        let mut rng = rand::rng();
-        let selected_menus: Vec<MenuData> = (0..menu_count)
-            .map(|_| self.available_menus[rng.random_range(0..self.available_menus.len())].clone())
-            .collect();
+    pub async fn create_order(&self, menu_count: usize) -> Result<()> {
+        let selected_menus: Vec<MenuData> = {
+            let mut rng = rand::rng();
+            (0..menu_count)
+                .map(|_| self.available_menus[rng.gen_range(0..self.available_menus.len())].clone())
+                .collect()
+        };
 
         let payload = serde_json::json!({
             "table_id": self.available_menus,
@@ -81,7 +88,7 @@ impl RestaurantClient {
         Ok(())
     }
 
-    pub async fn delete_order(&self, table_id: u32, order_id: Uuid) -> Result<(), Box<dyn Error>> {
+    pub async fn delete_order(&self, table_id: u32, order_id: Uuid) -> Result<()> {
         let path = format!("{}/tables/{}/orders/{}", self.base_url, table_id, order_id);
         self.client
             .delete(&path)
@@ -91,7 +98,7 @@ impl RestaurantClient {
         Ok(())
     }
 
-    pub async fn get_specific_order(&self, table_id: u32, order_id: Uuid) -> Result<Order, Box<dyn Error>> {
+    pub async fn get_specific_order(&self, table_id: u32, order_id: Uuid) -> Result<Order> {
         let path = format!("{}/tables/{}/orders/{}", self.base_url, table_id, order_id);
         let response: ApiResponse<Order> = self
             .client
