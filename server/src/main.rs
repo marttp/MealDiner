@@ -2,6 +2,7 @@ mod handler;
 mod config;
 mod menu;
 mod order;
+mod internal_store;
 
 use axum::http::{HeaderValue, Method};
 use axum::routing::{delete, get, post};
