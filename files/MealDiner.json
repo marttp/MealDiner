@@ -1,0 +1,133 @@
+{
+  "v": 5,
+  "name": "MealDiner",
+  "folders": [],
+  "requests": [
+    {
+      "v": "9",
+      "name": "Health Check",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/health",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "9",
+      "name": "Get available menus",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/menus",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "9",
+      "name": "Get configs",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/configs",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "9",
+      "name": "Order menu",
+      "method": "POST",
+      "endpoint": "http://localhost:8080/orders",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"table_id\": 1,\n  \"menus\": [\n    {\n      \"id\": \"a7e529c4-da09-489b-b173-42c597965b86\",\n      \"name\": \"Ramen\"\n    }\n  ]\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "9",
+      "name": "Get orders from specific tableId",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/tables/1/orders",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "9",
+      "name": "Get order information by specific orderId",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/tables/1/orders/6e674f61-b2ac-4a9f-960d-fd5ae52c5516",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    }
+  ],
+  "auth": {
+    "authType": "none",
+    "authActive": true
+  },
+  "headers": [],
+  "_ref_id": "coll_m4dqcnei_f3788eba-39a8-484c-8902-718cbd56cc3f"
+}
