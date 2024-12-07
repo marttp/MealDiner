@@ -226,7 +226,7 @@ mod tests {
     fn test_random_cooking_time() {
         for _ in 0..100 {
             let cooking_time = random_cooking_time();
-            assert!(cooking_time >= 5 && cooking_time <= 15);
+            assert!((5..=15).contains(&cooking_time));
         }
     }
 }
