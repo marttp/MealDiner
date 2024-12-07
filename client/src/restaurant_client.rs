@@ -47,6 +47,9 @@ impl RestaurantClient {
             .await?;
         self.available_menus = menus.data;
 
+        println!("Get config: {:?}", self.config);
+        println!("Available menus: {:?}", self.available_menus);
+
         Ok(())
     }
 
@@ -55,6 +58,7 @@ impl RestaurantClient {
             "{}/tables/{}/orders",
             self.base_url, table_id
         );
+        println!("Getting table orders from {}", path);
         let response: ApiResponse<Vec<Order>> = self
             .client
             .get(&path)
@@ -65,7 +69,7 @@ impl RestaurantClient {
         Ok(response.data)
     }
 
-    pub async fn create_order(&self, menu_count: usize) -> Result<()> {
+    pub async fn create_order(&self, table_id: u32, menu_count: usize) -> Result<()> {
         let selected_menus: Vec<MenuData> = {
             let mut rng = rand::rng();
             (0..menu_count)
@@ -74,7 +78,7 @@ impl RestaurantClient {
         };
 
         let payload = serde_json::json!({
-            "table_id": self.available_menus,
+            "table_id": table_id,
             "menus": selected_menus
         });
 
