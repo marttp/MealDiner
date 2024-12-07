@@ -11,6 +11,7 @@ use crate::config::handler::get_configs;
 use crate::handler::health_check_handler;
 use crate::menu::handler::get_available_menus;
 use crate::order::handler::create_orders;
+use crate::table::handler::{delete_table_order, get_table_order, get_table_orders};
 use axum::http::{HeaderValue, Method};
 use axum::routing::{delete, get, post};
 use axum::Router;
@@ -19,12 +20,13 @@ use tower_http::compression::CompressionLayer;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 use tracing::info;
-use crate::table::handler::{delete_table_order, get_table_order, get_table_orders};
 
 #[tokio::main]
 async fn main() {
     // Load env - If deploy in container solution. Env should available on injection.
-    dotenvy::dotenv().expect("Cannot load env");
+    if dotenvy::dotenv().is_err() {
+        info!("No .env file found, proceeding with environment variables");
+    }
     tracing_subscriber::fmt::init();
 
     let defined_port = std::env::var("SERVER_PORT").unwrap_or("8000".to_string());
