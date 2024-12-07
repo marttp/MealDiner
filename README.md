@@ -81,7 +81,7 @@ For smoother in simulation, additional endpoint
 1. Get configs & menus
 2. Get orders of the table
    * If table empty -> Order
-   * If table contains at least 1 menu
+   * If table contains at least 1 menu, Random below options
      * Order more
      * Random delete
      * Random get specify order id
