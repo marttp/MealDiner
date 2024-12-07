@@ -1,27 +1,29 @@
-mod handler;
+mod app_state;
 mod config;
+mod handler;
+mod internal_store;
 mod menu;
 mod order;
-mod internal_store;
-mod app_state;
+mod table;
 
-use std::collections::HashMap;
-use std::sync::Arc;
-use axum::http::{HeaderValue, Method};
-use axum::routing::{delete, get, post};
-use axum::Router;
-use dotenv::dotenv;
-use tokio::sync::RwLock;
-use tower_http::compression::CompressionLayer;
-use tower_http::cors::CorsLayer;
-use tower_http::trace::TraceLayer;
-use tracing::info;
 use crate::app_state::AppState;
 use crate::config::handler::get_configs;
 use crate::handler::health_check_handler;
 use crate::menu::handler::get_available_menus;
 use crate::order::handler::create_orders;
 use crate::order::model::Order;
+use axum::http::{HeaderValue, Method};
+use axum::routing::{delete, get, post};
+use axum::Router;
+use dotenv::dotenv;
+use std::collections::HashMap;
+use std::sync::Arc;
+use tokio::sync::RwLock;
+use tower_http::compression::CompressionLayer;
+use tower_http::cors::CorsLayer;
+use tower_http::trace::TraceLayer;
+use tracing::info;
+use crate::table::handler::{delete_table_order, get_table_order, get_table_orders};
 
 #[tokio::main]
 async fn main() {
@@ -38,13 +40,16 @@ async fn main() {
 
     let app_state = Arc::new(AppState::new());
 
+    let table_routes = Router::new()
+        .route("/:id/orders", get(get_table_orders))
+        .route("/:id/orders/:order_id", get(get_table_order))
+        .route("/:id/orders/:order_id", delete(delete_table_order));
+
     let app = Router::new()
         .route("/health", get(health_check_handler))
         .route("/configs", get(get_configs))
         .route("/menus", get(get_available_menus))
-        // .route("/tables/:id/orders", get(get_table_orders))
-        // .route("/tables/:id/orders/:order_id", get(get_table_order))
-        // .route("/tables/:id/orders/:order_id", delete(delete_table_order))
+        .nest("/tables", table_routes)
         .route("/orders", post(create_orders))
         .layer(TraceLayer::new_for_http())
         .layer(CompressionLayer::new())
