@@ -1,22 +1,21 @@
-use std::sync::Arc;
-use axum::extract::State;
+use crate::app_state::AppState;
 use crate::config::handler::get_config_internally;
 use crate::order::model::{CreateOrderRequest, Order};
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::Json;
 use chrono::Utc;
 use rand::Rng;
 use serde_json::json;
+use std::sync::Arc;
 use tracing::info;
 use uuid::Uuid;
-use crate::app_state::AppState;
 
 pub async fn create_orders(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateOrderRequest>,
 ) -> Result<impl IntoResponse, StatusCode> {
-
     let config = get_config_internally();
 
     if !(config.table_range.0..=config.table_range.1).contains(&payload.table_id) {
@@ -56,4 +55,17 @@ pub async fn create_orders(
 
 fn random_cooking_time() -> u32 {
     rand::rng().random_range(5..=15)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_random_cooking_time() {
+        for _ in 0..100 {
+            let cooking_time = random_cooking_time();
+            assert!(cooking_time >= 5 && cooking_time <= 15);
+        }
+    }
 }
