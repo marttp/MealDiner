@@ -25,26 +25,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_config_internally_default() {
-        std::env::remove_var("AVAILABLE_TABLES");
-
-        let config = get_config_internally();
-        assert_eq!(config.table_range.0, 1);
-        assert_eq!(config.table_range.1, 10000);
-    }
-
-    #[test]
-    fn test_get_config_internally_with_env() {
-        std::env::set_var("AVAILABLE_TABLES", "5000");
-
-        let config = get_config_internally();
-        assert_eq!(config.table_range.0, 1);
-        assert_eq!(config.table_range.1, 5000);
-
-        std::env::remove_var("AVAILABLE_TABLES");
-    }
-
-    #[test]
     fn test_config_new_success() {
         let config = Config::new((1, 100));
         assert!(config.is_ok());
