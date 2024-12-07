@@ -1,24 +1,18 @@
-use crate::order::model::{CreateOrderRequest, Order};
-use once_cell::sync::Lazy;
-use rand::Rng;
-use std::collections::HashMap;
 use std::sync::Arc;
-use axum::http::StatusCode;
-use axum::Json;
-use axum::response::IntoResponse;
-use chrono::Utc;
-use serde_json::json;
-use tokio::sync::RwLock;
-use uuid::Uuid;
+use axum::extract::State;
 use crate::config::handler::get_config_internally;
-
-type OrderStorage = Arc<RwLock<HashMap<u32, Vec<Order>>>>;
-
-static ORDERS: Lazy<OrderStorage> = Lazy::new(|| {
-    Arc::new(RwLock::new(HashMap::new()))
-});
+use crate::order::model::{CreateOrderRequest, Order};
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::Json;
+use chrono::Utc;
+use rand::Rng;
+use serde_json::json;
+use uuid::Uuid;
+use crate::app_state::AppState;
 
 pub async fn create_orders(
+    State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateOrderRequest>,
 ) -> Result<impl IntoResponse, StatusCode> {
 
@@ -43,7 +37,7 @@ pub async fn create_orders(
         new_orders.push(order);
     }
 
-    let mut orders = ORDERS.write().await;
+    let mut orders = state.orders.write().await;
     orders
         .entry(payload.table_id)
         .or_default()
