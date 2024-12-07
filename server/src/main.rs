@@ -14,7 +14,6 @@ use crate::order::handler::create_orders;
 use axum::http::{HeaderValue, Method};
 use axum::routing::{delete, get, post};
 use axum::Router;
-use dotenv::dotenv;
 use std::sync::Arc;
 use tower_http::compression::CompressionLayer;
 use tower_http::cors::CorsLayer;
@@ -25,7 +24,7 @@ use crate::table::handler::{delete_table_order, get_table_order, get_table_order
 #[tokio::main]
 async fn main() {
     // Load env - If deploy in container solution. Env should available on injection.
-    dotenv().ok();
+    dotenvy::dotenv().expect("Cannot load env");
     tracing_subscriber::fmt::init();
 
     let defined_port = std::env::var("SERVER_PORT").unwrap_or("8000".to_string());
@@ -57,6 +56,6 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(server_address.clone())
         .await
         .unwrap();
-    info!("Server started successfully");
+    info!("Server started successfully on {}", server_address);
     axum::serve(listener, app).await.unwrap();
 }

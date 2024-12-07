@@ -3,7 +3,6 @@ mod restaurant_client;
 
 use crate::model::Order;
 use crate::restaurant_client::RestaurantClient;
-use dotenv::dotenv;
 use rand::{rng, Rng};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -26,7 +25,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
-    dotenv().ok();
+    dotenvy::dotenv().expect("Cannot load env");
     let args = Args::parse();
 
     let base_url = std::env::var("SERVER_HOST").expect("SERVER_HOST is not set");
