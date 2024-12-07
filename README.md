@@ -63,7 +63,7 @@ This can refer to 4 API without update capability
 
 - `GET /tables/:id/orders` - Get list of menu on specify table
 - `GET /tables/:id/orders/:order_id` - Get specify item for order id in that table
-- `POST /orders` - Order new food. Table specify in payload. Also, random cooking time internally on backend
+- `POST /orders` - Order new food. Accept multiple menus. Table specify in payload. Also, random cooking time internally on backend
 - `DELETE /tables/:id/orders/:order_id` - Delete specify item for order id in that table
 
 For smoother in simulation, additional endpoint
