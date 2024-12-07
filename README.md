@@ -11,12 +11,15 @@ Thanaphoom Babparn (Mart) - [LinkedIn](https://www.linkedin.com/in/thanaphoom-ba
 1. Open terminal
 2. Start backend
     ````shell
-    
+    cd server
+    cargo run
     ````
 3. Open another terminal
 4. Start client simulation
     ````shell
-    
+    cd client
+    # 200 RPS
+    cargo run -- --interval-secs 1 --max-rps 200
     ````
 ## How to run tests & test coverage
 
