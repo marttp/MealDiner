@@ -184,5 +184,5 @@ docker buildx build -t mealdiner:0.0.1 .
 Then run
 
 ```shell
-docker run -d -p 8080:8080 -e SERVER_PORT=8080 -e AVAILABLE_TABLES=10000 marttp/mealdiner:0.0.1
+docker run -d -p 8080:8080 -e SERVER_PORT=8080 -e AVAILABLE_TABLES=10000 mealdiner:0.0.1
 ```
