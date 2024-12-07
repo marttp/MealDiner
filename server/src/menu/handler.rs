@@ -92,8 +92,9 @@ mod tests {
             data: Vec<MenuData>
         }
 
-        let _: ApiResponse = serde_json::from_slice(&body).unwrap();
-        // If this doesn't panic, serialization works correctly
+        let api_response: ApiResponse = serde_json::from_slice(&body).unwrap();
+        assert!(!api_response.data.is_empty());
+        assert!(api_response.status.eq("success"));
     }
 
     #[tokio::test]
