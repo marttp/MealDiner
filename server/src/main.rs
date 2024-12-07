@@ -12,7 +12,9 @@ use axum::routing::{delete, get, post};
 use axum::Router;
 use dotenv::dotenv;
 use tokio::sync::RwLock;
+use tower_http::compression::CompressionLayer;
 use tower_http::cors::CorsLayer;
+use tower_http::trace::TraceLayer;
 use tracing::info;
 use crate::app_state::AppState;
 use crate::config::handler::get_configs;
@@ -44,6 +46,8 @@ async fn main() {
         // .route("/tables/:id/orders/:order_id", get(get_table_order))
         // .route("/tables/:id/orders/:order_id", delete(delete_table_order))
         .route("/orders", post(create_orders))
+        .layer(TraceLayer::new_for_http())
+        .layer(CompressionLayer::new())
         .layer(cors)
         // Reference to app state and potentially put database connection pool here
         .with_state(app_state.clone());
