@@ -76,12 +76,11 @@ impl RestaurantClient {
                 .map(|_| self.available_menus[rng.random_range(0..self.available_menus.len())].clone())
                 .collect()
         };
-
+        println!("Creating order for table {}", table_id);
         let payload = serde_json::json!({
             "table_id": table_id,
             "menus": selected_menus
         });
-
         let path = format!("{}/orders", self.base_url);
         self.client
             .post(&path)
@@ -94,6 +93,7 @@ impl RestaurantClient {
 
     pub async fn delete_order(&self, table_id: u32, order_id: Uuid) -> Result<()> {
         let path = format!("{}/tables/{}/orders/{}", self.base_url, table_id, order_id);
+        println!("Deleting order {} for table {}", order_id, table_id);
         self.client
             .delete(&path)
             .send()
@@ -104,6 +104,7 @@ impl RestaurantClient {
 
     pub async fn get_specific_order(&self, table_id: u32, order_id: Uuid) -> Result<Order> {
         let path = format!("{}/tables/{}/orders/{}", self.base_url, table_id, order_id);
+        println!("Getting specific order {} for table {}", order_id, table_id);
         let response: ApiResponse<Order> = self
             .client
             .get(&path)
