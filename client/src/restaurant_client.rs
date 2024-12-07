@@ -69,7 +69,7 @@ impl RestaurantClient {
         let selected_menus: Vec<MenuData> = {
             let mut rng = rand::rng();
             (0..menu_count)
-                .map(|_| self.available_menus[rng.gen_range(0..self.available_menus.len())].clone())
+                .map(|_| self.available_menus[rng.random_range(0..self.available_menus.len())].clone())
                 .collect()
         };
 
