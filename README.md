@@ -18,6 +18,36 @@ Thanaphoom Babparn (Mart) - [LinkedIn](https://www.linkedin.com/in/thanaphoom-ba
     ````shell
     
     ````
+## How to run tests & test coverage
+
+### Run test only
+
+1. Move to backend application
+    ```shell
+    cd server
+    ```
+2. Run all test
+    ```shell
+    cargo test
+    ```
+
+### Test Coverage
+
+1. Install required tools first
+    ```shell
+    rustup component add llvm-tools-preview
+    cargo install cargo-llvm-cov
+    ```
+2. Move to backend application
+    ```shell
+    cd server
+    ```
+   
+3. Run test coverage
+
+    ```shell
+    cargo llvm-cov
+    ```
 
 ## Business purpose
 
