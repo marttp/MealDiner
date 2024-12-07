@@ -58,7 +58,6 @@ impl RestaurantClient {
             "{}/tables/{}/orders",
             self.base_url, table_id
         );
-        println!("Getting table orders from {}", path);
         let response: ApiResponse<Vec<Order>> = self
             .client
             .get(&path)

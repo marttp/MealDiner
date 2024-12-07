@@ -1,14 +1,15 @@
 mod model;
 mod restaurant_client;
 
+use crate::model::Order;
 use crate::restaurant_client::RestaurantClient;
 use dotenv::dotenv;
 use rand::{rng, Rng};
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
-use crate::model::Order;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -24,10 +25,14 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     let max_rps = 10;
 
     loop {
-        for _ in 0..max_rps {
+        let mut set: HashSet<u32> = HashSet::new();
+        while set.len() != max_rps {
             let table_id = rng().random_range(start_range..=end_range);
-            let client_clone = client.clone();
+            set.insert(table_id);
+        }
 
+        for table_id in set {
+            let client_clone = client.clone();
             tokio::spawn(async move {
                 match client_clone.get_table_orders(table_id).await {
                     Ok(orders) => {
