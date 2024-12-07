@@ -8,6 +8,7 @@ use axum::Json;
 use chrono::Utc;
 use rand::Rng;
 use serde_json::json;
+use tracing::info;
 use uuid::Uuid;
 use crate::app_state::AppState;
 
@@ -42,6 +43,8 @@ pub async fn create_orders(
         .entry(payload.table_id)
         .or_default()
         .extend(new_orders.clone());
+
+    info!("Created orders for table: {:?}", payload.table_id);
 
     let response = Json(json!({
         "status": "success",
