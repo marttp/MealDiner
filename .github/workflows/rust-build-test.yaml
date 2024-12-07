@@ -1,0 +1,56 @@
+name: Server Build and Test
+
+on:
+  workflow_call:
+  push:
+    paths:
+      - 'server/**'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'server/**'
+      - '.github/workflows/**'
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  Build-Test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            server/target/
+          key: ${{ runner.os }}-cargo-server-${{ hashFiles('server/Cargo.lock') }}
+
+      - name: Build test
+        run: cargo build --release --verbose
+
+      - name: Run tests
+        run: cargo test --verbose
+
+      - name: Lint with clippy
+        run: cargo clippy --all-targets --all-features
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+      - name: Check for security vulnerabilities
+        uses: actions-rs/audit-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          working-directory: ./server
