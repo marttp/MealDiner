@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::time::Duration;
 use tokio::time::sleep;
+use crate::model::Order;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -31,42 +32,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                 match client_clone.get_table_orders(table_id).await {
                     Ok(orders) => {
                         if orders.is_empty() {
-                            println!("No orders found for table id {}", table_id);
-                            let menu_count = rng().random_range(1..=3);
-                            if let Err(e) = client_clone.create_order(table_id, menu_count).await {
-                                eprintln!("Error creating order for table {}: {}", table_id, e);
-                            }
+                            handle_empty_order(table_id, &client_clone).await;
                         } else {
-                            let action = rng().random_range(0..3);
-                            let result = match action {
-                                0 => {
-                                    let menu_count = rng().random_range(1..=2);
-                                    client_clone.create_order(table_id, menu_count).await
-                                }
-                                1 => {
-                                    if !orders.is_empty() {
-                                        let idx = rng().random_range(0..orders.len());
-                                        client_clone.delete_order(table_id, orders[idx].id).await
-                                    } else {
-                                        Ok(())
-                                    }
-                                }
-                                _ => {
-                                    if !orders.is_empty() {
-                                        let idx = rng().random_range(0..orders.len());
-                                        client_clone
-                                            .get_specific_order(table_id, orders[idx].id)
-                                            .await
-                                            .map(|_| ())
-                                    } else {
-                                        Ok(())
-                                    }
-                                }
-                            };
-
-                            if let Err(e) = result {
-                                eprintln!("Error for table {}: {}", table_id, e);
-                            }
+                            specific_operation(table_id, client_clone, orders).await;
                         }
                     }
                     Err(e) => eprintln!("Error getting orders for table {}: {}", table_id, e),
@@ -75,5 +43,46 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         }
 
         sleep(Duration::from_secs(interval_secs)).await;
+    }
+}
+
+async fn handle_empty_order(table_id: u32, client_clone: &RestaurantClient) {
+    println!("No orders found for table id {}", table_id);
+    let menu_count = rng().random_range(1..=3);
+    if let Err(e) = client_clone.create_order(table_id, menu_count).await {
+        eprintln!("Error creating order for table {}: {}", table_id, e);
+    }
+}
+
+async fn specific_operation(table_id: u32, client_clone: RestaurantClient, orders: Vec<Order>) {
+    let action = rng().random_range(0..3);
+    let result = match action {
+        0 => {
+            let menu_count = rng().random_range(1..=2);
+            client_clone.create_order(table_id, menu_count).await
+        }
+        1 => {
+            if !orders.is_empty() {
+                let idx = rng().random_range(0..orders.len());
+                client_clone.delete_order(table_id, orders[idx].id).await
+            } else {
+                Ok(())
+            }
+        }
+        _ => {
+            if !orders.is_empty() {
+                let idx = rng().random_range(0..orders.len());
+                client_clone
+                    .get_specific_order(table_id, orders[idx].id)
+                    .await
+                    .map(|_| ())
+            } else {
+                Ok(())
+            }
+        }
+    };
+
+    if let Err(e) = result {
+        eprintln!("Error for table {}: {}", table_id, e);
     }
 }
