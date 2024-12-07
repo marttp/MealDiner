@@ -40,4 +40,48 @@ The solid system for your restaurant. Implemented by Rust programming languages.
 
 ## Design Ideas
 
-TBC
+### Business Example
+
+I am going to use popular food chain restaurant in Japan which has 2,000 branches covered in Japan as example.
+
+For our use-case, I want to assume we have 1,000 branches and with 10 tables on each. However, Assume RPS/TPS is at least 100 RPS.
+* 1,000 branches x 10 tables = 10,000 tables
+* 100 simultaneous requests per second
+
+![overview scenario.jpg](files/overview%20scenario.jpg)
+
+### API Design
+
+```text
+* Query request - show all items for a specified table number.
+* Query request - show a specified item for a specified table number.
+* Creation request - store the item, the table number, and how long the item will take to cook.
+* Deletion request - remove a specified item for a specified table number.
+```
+
+This can refer to 4 API without update capability
+
+- `GET /tables/:id/orders` - Get list of menu on specify table
+- `GET /tables/:id/orders/:order_id` - Get specify item for order id in that table
+- `POST /orders` - Order new food. Table specify in payload. Also, random cooking time internally on backend
+- `DELETE /tables/:id/orders/:order_id` - Delete specify item for order id in that table
+
+For smoother in simulation, additional endpoint
+
+- `GET /health` - Status of backend
+- `GET /menus` - Get list of menu. For this simulation, only 3 menus are allowed.
+  - Ramen
+  - Beef rice
+  - Beer
+- `GET /configs` - Just for initialization on client
+  - How many tables? start - end
+
+### Client simulation logic
+
+1. Get configs & menus
+2. Get orders of the table
+   * If table empty -> Order
+   * If table contains at least 1 menu
+     * Order more
+     * Random delete
+     * Random get specify order id
