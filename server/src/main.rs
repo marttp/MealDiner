@@ -11,14 +11,11 @@ use crate::config::handler::get_configs;
 use crate::handler::health_check_handler;
 use crate::menu::handler::get_available_menus;
 use crate::order::handler::create_orders;
-use crate::order::model::Order;
 use axum::http::{HeaderValue, Method};
 use axum::routing::{delete, get, post};
 use axum::Router;
 use dotenv::dotenv;
-use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::sync::RwLock;
 use tower_http::compression::CompressionLayer;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
@@ -49,8 +46,8 @@ async fn main() {
         .route("/health", get(health_check_handler))
         .route("/configs", get(get_configs))
         .route("/menus", get(get_available_menus))
-        .nest("/tables", table_routes)
         .route("/orders", post(create_orders))
+        .nest("/tables", table_routes)
         .layer(TraceLayer::new_for_http())
         .layer(CompressionLayer::new())
         .layer(cors)

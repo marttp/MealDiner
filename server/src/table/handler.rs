@@ -28,7 +28,7 @@ pub async fn get_table_order(
     let orders = state.orders.read().await;
     match orders.get(&table_id) {
         Some(table_orders) => {
-            if let Some(order) = table_orders.iter().find(|order| order.id == *order_id) {
+            if let Some(order) = table_orders.iter().find(|order| order.id == order_id) {
                 let response = json!({ "status": "success", "data": order });
                 Ok(Json(response))
             } else {
@@ -43,5 +43,17 @@ pub async fn delete_table_order(
     State(state): State<Arc<AppState>>,
     Path((table_id, order_id)): Path<(u32, Uuid)>,
 ) -> Result<impl IntoResponse, StatusCode> {
-    Ok(json!({ "status": "success" }))
+    let mut orders = state.orders.write().await;
+    if let Some(table_orders) = orders.get_mut(&table_id) {
+        let current_size = table_orders.len();
+        table_orders.retain(|order| order.id != order_id);
+        // Succeed to remove
+        if  table_orders.len() < current_size {
+            Ok(StatusCode::BAD_REQUEST)
+        } else {
+            Err(StatusCode::NOT_FOUND)
+        }
+    } else {
+        Err(StatusCode::NOT_FOUND)
+    }
 }
