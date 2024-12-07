@@ -1,9 +1,10 @@
 mod handler;
 mod config;
 mod menu;
+mod order;
 
 use axum::http::{HeaderValue, Method};
-use axum::routing::get;
+use axum::routing::{delete, get, post};
 use axum::Router;
 use dotenv::dotenv;
 use tower_http::cors::CorsLayer;
@@ -29,6 +30,10 @@ async fn main() {
         .route("/health", get(health_check_handler))
         .route("/configs", get(get_configs))
         .route("/menus", get(get_available_menus))
+        // .route("/tables/:id/orders", get(get_table_orders))
+        // .route("/tables/:id/orders/:order_id", get(get_table_order))
+        // .route("/tables/:id/orders/:order_id", delete(delete_table_order))
+        // .route("/orders", post(create_orders))
         .layer(cors);
 
     let listener = tokio::net::TcpListener::bind(server_address.clone())
