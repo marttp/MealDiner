@@ -1,6 +1,7 @@
 use crate::config::model::Config;
 use axum::response::IntoResponse;
 use axum::Json;
+use tracing::debug;
 
 pub fn get_config_internally() -> Config {
     let max_tables = std::env::var("AVAILABLE_TABLES").unwrap_or("10000".to_string());
@@ -14,6 +15,7 @@ pub async fn get_configs() -> impl IntoResponse {
         "status": "success",
         "data": config
     });
+    debug!("Config: {:?}", &json_response);
     Json(json_response)
 }
 

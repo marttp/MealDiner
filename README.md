@@ -137,3 +137,13 @@ For smoother in simulation, additional endpoint
      * Random get specify order id
 
 ![client-simulation.jpg](files/client-simulation.jpg)
+
+## Example Result
+
+### Server
+
+![server-result.jpg](files/server-result.jpg)
+
+### Client
+
+![client-result.jpg](files/client-result.jpg)

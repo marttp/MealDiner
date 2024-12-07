@@ -5,6 +5,7 @@ use axum::response::IntoResponse;
 use axum::Json;
 use serde_json::json;
 use std::sync::Arc;
+use tracing::{debug, info};
 use uuid::Uuid;
 
 pub async fn get_table_orders(
@@ -13,7 +14,7 @@ pub async fn get_table_orders(
 ) -> impl IntoResponse {
     let orders = state.orders.read().await;
     let table_orders = orders.get(&table_id).cloned().unwrap_or_default();
-
+    debug!("get_table_order: {:?}", table_orders);
     let response = json!({
         "status": "success",
         "data": table_orders
@@ -29,6 +30,7 @@ pub async fn get_table_order(
     match orders.get(&table_id) {
         Some(table_orders) => {
             if let Some(order) = table_orders.iter().find(|order| order.id == order_id) {
+                info!("get_table_order: {:?}", order);
                 let response = json!({ "status": "success", "data": order });
                 Ok(Json(response))
             } else {
@@ -49,6 +51,7 @@ pub async fn delete_table_order(
         table_orders.retain(|order| order.id != order_id);
         // Succeed to remove
         if  table_orders.len() < current_size {
+            info!("deleting order {} on table {}", current_size, table_id);
             Ok(StatusCode::NO_CONTENT)
         } else {
             Err(StatusCode::NOT_FOUND)

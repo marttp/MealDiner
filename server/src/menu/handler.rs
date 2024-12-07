@@ -3,6 +3,7 @@ use axum::response::IntoResponse;
 use axum::Json;
 use std::ops::Deref;
 use std::sync::Arc;
+use tracing::info;
 
 pub async fn get_available_menus() -> impl IntoResponse {
     let menus = Arc::clone(&MENUS);
@@ -11,5 +12,6 @@ pub async fn get_available_menus() -> impl IntoResponse {
         "status": "success",
         "data": *data
     });
+    info!("Available menus: {:?}", json_response);
     Json(json_response)
 }
