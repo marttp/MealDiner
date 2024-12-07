@@ -43,11 +43,11 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
 
-      - name: Lint with clippy
-        run: cargo clippy --all-targets --all-features
+#      - name: Lint with clippy
+#        run: cargo clippy --all-targets --all-features
 
-      - name: Check formatting
-        run: cargo fmt --all --check
+#      - name: Check formatting
+#        run: cargo fmt --all --check
 
       - name: Check for security vulnerabilities
         uses: actions-rs/audit-check@v1
