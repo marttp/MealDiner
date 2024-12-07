@@ -151,3 +151,38 @@ For smoother in simulation, additional endpoint
 ### Client
 
 ![client-result.jpg](files/client-result.jpg)
+
+
+## Build & Run container
+
+### Old `docker build`
+
+``shell
+docker build -t mealdiner:0.0.1 .
+``
+
+### With `buildx`
+
+Install buildx first
+
+```shell
+brew install docker-buildx
+
+mkdir ~/.docker/cli-plugins
+
+ln -sfn $(which docker-buildx) ~/.docker/cli-plugins/docker-buildx
+
+docker buildx install
+```
+
+Then use this command
+
+```shell
+docker buildx build -t mealdiner:0.0.1 .
+```
+
+Then run
+
+```shell
+docker run -d -p 8080:8080 -e SERVER_PORT=8080 -e AVAILABLE_TABLES=10000 marttp/mealdiner:0.0.1
+```
