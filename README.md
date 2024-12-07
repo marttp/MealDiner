@@ -2,6 +2,10 @@
 
 The solid system for your restaurant. Implemented by Rust programming languages.
 
+## Developer
+
+Thanaphoom Babparn (Mart) - [LinkedIn](https://www.linkedin.com/in/thanaphoom-babparn/?locale=en_US)
+
 ## Business purpose
 
 * A restaurant application which accepts menu items from various serving staff in the restaurant. 
@@ -85,3 +89,5 @@ For smoother in simulation, additional endpoint
      * Order more
      * Random delete
      * Random get specify order id
+
+![client-simulation.jpg](files/client-simulation.jpg)
