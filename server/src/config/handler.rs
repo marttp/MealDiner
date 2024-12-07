@@ -21,8 +21,8 @@ pub async fn get_configs() -> impl IntoResponse {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::model::ConfigError;
     use super::*;
+    use crate::config::model::ConfigError;
 
     #[test]
     fn test_config_new_success() {

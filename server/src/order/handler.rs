@@ -83,17 +83,16 @@ mod tests {
             menus: vec![menu.clone()],
         };
 
-        let result = create_orders(
-            State(state.clone()),
-            Json(payload)
-        ).await;
+        let result = create_orders(State(state.clone()), Json(payload)).await;
 
         match result {
             Ok(response) => {
                 let response = response.into_response();
                 assert_eq!(response.status(), StatusCode::OK);
 
-                let body = axum::body::to_bytes(response.into_body(), 1024).await.unwrap();
+                let body = axum::body::to_bytes(response.into_body(), 1024)
+                    .await
+                    .unwrap();
                 let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
                 assert_eq!(json["status"], "success");
@@ -103,7 +102,7 @@ mod tests {
 
                 let orders = state.orders.read().await;
                 assert_eq!(orders.get(&1).unwrap().len(), 1);
-            },
+            }
             Err(_) => panic!("Expected success response"),
         }
     }
@@ -112,14 +111,11 @@ mod tests {
     async fn test_create_orders_invalid_table() {
         let state = create_test_state();
         let payload = CreateOrderRequest {
-            table_id: 99999,  // Invalid table number
+            table_id: 99999, // Invalid table number
             menus: vec![create_test_menu()],
         };
 
-        let result = create_orders(
-            State(state),
-            Json(payload)
-        ).await;
+        let result = create_orders(State(state), Json(payload)).await;
 
         match result {
             Ok(_) => panic!("Expected error response"),
@@ -137,17 +133,16 @@ mod tests {
             menus: menus.clone(),
         };
 
-        let result = create_orders(
-            State(state.clone()),
-            Json(payload)
-        ).await;
+        let result = create_orders(State(state.clone()), Json(payload)).await;
 
         match result {
             Ok(response) => {
                 let response = response.into_response();
                 assert_eq!(response.status(), StatusCode::OK);
 
-                let body = axum::body::to_bytes(response.into_body(), 1024).await.unwrap();
+                let body = axum::body::to_bytes(response.into_body(), 1024)
+                    .await
+                    .unwrap();
                 let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
                 let data = json["data"].as_array().unwrap();
@@ -155,7 +150,7 @@ mod tests {
 
                 let orders = state.orders.read().await;
                 assert_eq!(orders.get(&1).unwrap().len(), 3);
-            },
+            }
             Err(_) => panic!("Expected success response"),
         }
     }
@@ -171,24 +166,24 @@ mod tests {
         };
 
         let before = Utc::now();
-        let result = create_orders(
-            State(state),
-            Json(payload)
-        ).await;
+        let result = create_orders(State(state), Json(payload)).await;
         let after = Utc::now();
 
         match result {
             Ok(response) => {
                 let response = response.into_response();
-                let body = axum::body::to_bytes(response.into_body(), 1024).await.unwrap();
+                let body = axum::body::to_bytes(response.into_body(), 1024)
+                    .await
+                    .unwrap();
                 let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
                 let created_at = chrono::DateTime::parse_from_rfc3339(
-                    json["data"][0]["created_at"].as_str().unwrap()
-                ).unwrap();
+                    json["data"][0]["created_at"].as_str().unwrap(),
+                )
+                .unwrap();
 
                 assert!(created_at >= before && created_at <= after);
-            },
+            }
             Err(_) => panic!("Expected success response"),
         }
     }
@@ -201,23 +196,22 @@ mod tests {
             menus: vec![],
         };
 
-        let result = create_orders(
-            State(state.clone()),
-            Json(payload)
-        ).await;
+        let result = create_orders(State(state.clone()), Json(payload)).await;
 
         match result {
             Ok(response) => {
                 let response = response.into_response();
                 assert_eq!(response.status(), StatusCode::OK);
 
-                let body = axum::body::to_bytes(response.into_body(), 1024).await.unwrap();
+                let body = axum::body::to_bytes(response.into_body(), 1024)
+                    .await
+                    .unwrap();
                 let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
                 assert!(json["data"].as_array().unwrap().is_empty());
 
                 let orders = state.orders.read().await;
                 assert!(orders.get(&1).unwrap_or(&vec![]).is_empty());
-            },
+            }
             Err(_) => panic!("Expected success response"),
         }
     }

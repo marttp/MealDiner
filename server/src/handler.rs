@@ -15,10 +15,7 @@ pub async fn health_check_handler() -> impl IntoResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{
-        response::Response,
-        body::to_bytes,
-    };
+    use axum::{body::to_bytes, response::Response};
     use http::StatusCode;
     use serde_json::Value;
 

@@ -50,7 +50,7 @@ pub async fn delete_table_order(
         let current_size = table_orders.len();
         table_orders.retain(|order| order.id != order_id);
         // Succeed to remove
-        if  table_orders.len() < current_size {
+        if table_orders.len() < current_size {
             info!("deleting order {} on table {}", current_size, table_id);
             Ok(StatusCode::NO_CONTENT)
         } else {
@@ -104,16 +104,13 @@ mod tests {
         let orders = setup_test_orders(&state, 1, 1).await;
         let order_id = orders[0].id;
 
-        let result = delete_table_order(
-            State(state.clone()),
-            Path((1, order_id))
-        ).await;
+        let result = delete_table_order(State(state.clone()), Path((1, order_id))).await;
 
         match result {
             Ok(response) => {
                 let response = response.into_response();
                 assert_eq!(response.status(), StatusCode::NO_CONTENT);
-            },
+            }
             Err(_) => panic!("Expected success response"),
         }
 
@@ -124,10 +121,7 @@ mod tests {
     #[tokio::test]
     async fn test_delete_order_not_found() {
         let state = create_test_state();
-        let result = delete_table_order(
-            State(state),
-            Path((1, Uuid::new_v4()))
-        ).await;
+        let result = delete_table_order(State(state), Path((1, Uuid::new_v4()))).await;
 
         match result {
             Ok(_) => panic!("Expected error response"),
@@ -157,7 +151,7 @@ mod tests {
                 Ok(response) => {
                     let response = response.into_response();
                     assert_eq!(response.status(), StatusCode::OK);
-                },
+                }
                 Err(_) => panic!("Expected success response"),
             }
         }));
@@ -169,7 +163,7 @@ mod tests {
                 Ok(response) => {
                     let response = response.into_response();
                     assert_eq!(response.status(), StatusCode::NO_CONTENT);
-                },
+                }
                 Err(_) => panic!("Expected success response"),
             }
         }));

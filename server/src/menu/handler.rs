@@ -19,13 +19,13 @@ pub async fn get_available_menus() -> impl IntoResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::response::Response;
+    use crate::order::model::MenuData;
     use axum::body::to_bytes;
+    use axum::response::Response;
     use http::StatusCode;
     use serde::Deserialize;
     use serde_json::Value;
     use uuid::Uuid;
-    use crate::order::model::MenuData;
 
     #[tokio::test]
     async fn test_get_available_menus() {
@@ -45,10 +45,7 @@ mod tests {
         assert!(first_menu["id"].is_string());
         assert!(first_menu["name"].is_string());
 
-        let menu_names: Vec<&str> = menus
-            .iter()
-            .map(|m| m["name"].as_str().unwrap())
-            .collect();
+        let menu_names: Vec<&str> = menus.iter().map(|m| m["name"].as_str().unwrap()).collect();
         assert!(menu_names.contains(&"Ramen"));
         assert!(menu_names.contains(&"Beer"));
         assert!(menu_names.contains(&"Beef rice"));
@@ -62,19 +59,13 @@ mod tests {
 
         let menus = json["data"].as_array().unwrap();
 
-        let mut ids: Vec<&str> = menus
-            .iter()
-            .map(|m| m["id"].as_str().unwrap())
-            .collect();
+        let mut ids: Vec<&str> = menus.iter().map(|m| m["id"].as_str().unwrap()).collect();
         let original_len = ids.len();
         ids.sort();
         ids.dedup();
         assert_eq!(ids.len(), original_len, "All menu IDs should be unique");
 
-        let mut names: Vec<&str> = menus
-            .iter()
-            .map(|m| m["name"].as_str().unwrap())
-            .collect();
+        let mut names: Vec<&str> = menus.iter().map(|m| m["name"].as_str().unwrap()).collect();
         let original_len = names.len();
         names.sort();
         names.dedup();
@@ -89,7 +80,7 @@ mod tests {
         #[derive(Debug, Deserialize)]
         struct ApiResponse {
             status: String,
-            data: Vec<MenuData>
+            data: Vec<MenuData>,
         }
 
         let api_response: ApiResponse = serde_json::from_slice(&body).unwrap();
