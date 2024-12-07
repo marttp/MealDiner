@@ -49,7 +49,7 @@ pub async fn delete_table_order(
         table_orders.retain(|order| order.id != order_id);
         // Succeed to remove
         if  table_orders.len() < current_size {
-            Ok(StatusCode::BAD_REQUEST)
+            Ok(StatusCode::NO_CONTENT)
         } else {
             Err(StatusCode::NOT_FOUND)
         }
