@@ -13,6 +13,7 @@ use tracing::info;
 use crate::config::handler::get_configs;
 use crate::handler::health_check_handler;
 use crate::menu::handler::get_available_menus;
+use crate::order::handler::create_orders;
 
 #[tokio::main]
 async fn main() {
@@ -34,7 +35,7 @@ async fn main() {
         // .route("/tables/:id/orders", get(get_table_orders))
         // .route("/tables/:id/orders/:order_id", get(get_table_order))
         // .route("/tables/:id/orders/:order_id", delete(delete_table_order))
-        // .route("/orders", post(create_orders))
+        .route("/orders", post(create_orders))
         .layer(cors);
 
     let listener = tokio::net::TcpListener::bind(server_address.clone())
