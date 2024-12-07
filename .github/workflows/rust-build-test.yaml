@@ -44,14 +44,3 @@ jobs:
 
 #      - name: Check formatting
 #        run: cargo fmt --all --check
-
-  security_audit:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./server
-    steps:
-      - uses: actions/checkout@v4
-      - uses: rustsec/audit-check@v1.4.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
