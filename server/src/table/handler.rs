@@ -60,3 +60,122 @@ pub async fn delete_table_order(
         Err(StatusCode::NOT_FOUND)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::order::model::{MenuData, Order};
+    use axum::response::Response;
+    use chrono::Utc;
+
+    fn create_test_state() -> Arc<AppState> {
+        Arc::new(AppState::new())
+    }
+
+    fn create_test_order(table_id: u32) -> Order {
+        Order {
+            id: Uuid::new_v4(),
+            table_id,
+            menu: MenuData {
+                id: Uuid::new_v4(),
+                name: "Test Menu".to_string(),
+            },
+            cooking_time_minutes: 10,
+            created_at: Utc::now(),
+        }
+    }
+
+    async fn setup_test_orders(state: &AppState, table_id: u32, count: usize) -> Vec<Order> {
+        let mut orders = Vec::new();
+        {
+            let mut state_orders = state.orders.write().await;
+            for _ in 0..count {
+                let order = create_test_order(table_id);
+                orders.push(order.clone());
+                state_orders.entry(table_id).or_default().push(order);
+            }
+        }
+        orders
+    }
+
+    #[tokio::test]
+    async fn test_delete_order_success() {
+        let state = create_test_state();
+        let orders = setup_test_orders(&state, 1, 1).await;
+        let order_id = orders[0].id;
+
+        let result = delete_table_order(
+            State(state.clone()),
+            Path((1, order_id))
+        ).await;
+
+        match result {
+            Ok(response) => {
+                let response = response.into_response();
+                assert_eq!(response.status(), StatusCode::NO_CONTENT);
+            },
+            Err(_) => panic!("Expected success response"),
+        }
+
+        let orders = state.orders.read().await;
+        assert!(orders.get(&1).unwrap().is_empty());
+    }
+
+    #[tokio::test]
+    async fn test_delete_order_not_found() {
+        let state = create_test_state();
+        let result = delete_table_order(
+            State(state),
+            Path((1, Uuid::new_v4()))
+        ).await;
+
+        match result {
+            Ok(_) => panic!("Expected error response"),
+            Err(status) => assert_eq!(status, StatusCode::NOT_FOUND),
+        }
+    }
+    #[tokio::test]
+    async fn test_concurrent_operations() {
+        let state = create_test_state();
+        let orders = setup_test_orders(&state, 1, 5).await;
+        let order_id = orders[0].id;
+
+        let mut handles = vec![];
+
+        let state_clone = state.clone();
+        handles.push(tokio::spawn(async move {
+            let response: Response = get_table_orders(State(state_clone), Path(1))
+                .await
+                .into_response();
+            assert_eq!(response.status(), StatusCode::OK);
+        }));
+
+        let state_clone = state.clone();
+        handles.push(tokio::spawn(async move {
+            let result = get_table_order(State(state_clone), Path((1, order_id))).await;
+            match result {
+                Ok(response) => {
+                    let response = response.into_response();
+                    assert_eq!(response.status(), StatusCode::OK);
+                },
+                Err(_) => panic!("Expected success response"),
+            }
+        }));
+
+        let state_clone = state.clone();
+        handles.push(tokio::spawn(async move {
+            let result = delete_table_order(State(state_clone), Path((1, order_id))).await;
+            match result {
+                Ok(response) => {
+                    let response = response.into_response();
+                    assert_eq!(response.status(), StatusCode::NO_CONTENT);
+                },
+                Err(_) => panic!("Expected success response"),
+            }
+        }));
+
+        for handle in handles {
+            handle.await.unwrap();
+        }
+    }
+}
