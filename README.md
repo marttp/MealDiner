@@ -18,7 +18,8 @@ Thanaphoom Babparn (Mart) - [LinkedIn](https://www.linkedin.com/in/thanaphoom-ba
 4. Start client simulation
     ````shell
     cd client
-    cargo run
+    # 200 RPS
+    cargo run -- --interval-secs 1 --max-rps 200
     ````
 ## How to run tests & test coverage
 
