@@ -9,11 +9,26 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::error::Error;
 use std::time::Duration;
+use clap::Parser;
 use tokio::time::sleep;
+
+#[derive(Parser)]
+#[command(author, version, about)]
+struct Args {
+    /// Interval between batches in seconds
+    #[arg(long, default_value = "1")]
+    interval_secs: u64,
+
+    /// Maximum requests per second
+    #[arg(long, default_value = "10")]
+    max_rps: usize,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     dotenv().ok();
+    let args = Args::parse();
+
     let base_url = std::env::var("SERVER_HOST").expect("SERVER_HOST is not set");
 
     let mut client = RestaurantClient::new(base_url.clone());
@@ -21,8 +36,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let config = client.get_config().expect("Config not initialized");
     let (start_range, end_range) = config.table_range;
-    let interval_secs = 10;
-    let max_rps = 10;
+    let interval_secs = args.interval_secs;
+    let max_rps = args.max_rps;
 
     loop {
         let mut set: HashSet<u32> = HashSet::new();
