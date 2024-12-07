@@ -140,6 +140,10 @@ For smoother in simulation, additional endpoint
 
 ## Example Result
 
+### API (Hoppscotch)
+
+[MealDiner.json](files/MealDiner.json)
+
 ### Server
 
 ![server-result.jpg](files/server-result.jpg)
